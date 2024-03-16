@@ -21,7 +21,7 @@ jobs:
           server-dir:  ./
           local-dir:   ./src/
           exclude: |
-             **/.git*
-             **/.git*/**
-             fileToExclude.txt
-             
+            **/.git*
+            **/.git*/**
+            **/public/adm/**
+            **/storage/**
