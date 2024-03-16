@@ -23,6 +23,5 @@ jobs:
           exclude: |
              **/.git*
              **/.git*/**
-             **/public/adm/**
-             **/storage/**
+             fileToExclude.txt
              
