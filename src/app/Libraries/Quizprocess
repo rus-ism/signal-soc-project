@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Libraries;
+
+class Quizprocess
+{
+    public $quiz_id;
+    public $respondent_id;
+    public $respondent_session;
+    public $respondent_result;
+
+
+    
+}

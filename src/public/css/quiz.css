@@ -1,0 +1,75 @@
+* {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+  }
+  .gpd-header{
+    margin:0;
+  }
+  .gpd-clm{
+    padding:5px 0;
+  }
+  .gpd-grid{
+    min-height:auto;
+    padding:10px 0;
+  }
+  #iffm{
+    min-height:150px;
+  }
+  #iwxu{
+    flex-basis:91.32%;
+    align-self:stretch;
+  }
+  #icqi{
+    flex-basis:147.91%;
+    height:150px;
+  }
+  #icet{
+    color:black;
+    max-width:45%;
+  }
+  #itit{
+    color:black;
+    max-width:45%;
+  }
+  #ie03i{
+    min-height:640px;
+    height:100%;
+  }
+  #igzjj{
+    flex-basis:150%;
+  }
+  #i8191{
+    background-image:url('https://images.unsplash.com/photo-1682685795463-0674c065f315?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjcwNXwxfDF8YWxsfDF8fHx8fHwyfHwxNjkwMzkzMzE0fA&ixlib=rb-4.0.3&q=80&w=1080');
+    background-size:cover;
+    background-position:center center;
+    background-attachment:scroll;
+    background-repeat:no-repeat;
+    height:291px;
+  }
+  #ibn5j{
+    background-image:url('https://images.unsplash.com/photo-1682685795463-0674c065f315?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjcwNXwxfDF8YWxsfDF8fHx8fHwyfHwxNjkwMzkzMzE0fA&ixlib=rb-4.0.3&q=80&w=1080');
+    background-size:cover;
+    background-position:center center;
+    background-attachment:scroll;
+    background-repeat:no-repeat;
+    height:283px;
+  }
+  #ij6e4{
+    background-image:url('https://images.unsplash.com/photo-1689969960265-230ed01d010e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjcwNXwwfDF8YWxsfDJ8fHx8fHwyfHwxNjkwMzkzMzE0fA&ixlib=rb-4.0.3&q=80&w=1080');
+    background-size:cover;
+    background-position:center center;
+    background-attachment:scroll;
+    background-repeat:no-repeat;
+    height:271px;
+  }
+  #ia25f{
+    background-image:url('https://images.unsplash.com/photo-1628808592686-345743b5aa9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjcwNXwwfDF8YWxsfDR8fHx8fHwyfHwxNjkwMzkzMzE0fA&ixlib=rb-4.0.3&q=80&w=1080');
+    background-size:cover;
+    background-position:center center;
+    background-attachment:scroll;
+    background-repeat:no-repeat;
+    height:312px;
+  }
+  
