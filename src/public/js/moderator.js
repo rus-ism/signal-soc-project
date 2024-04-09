@@ -95,7 +95,7 @@ $(".del_tutor").on('click', function(event){
 };     
 
 $.ajax({
-  type: "POST",
+  method: "POST",
   url: "/moderator/tutors/delete/",
   data: formData,
   dataType: 'json',
