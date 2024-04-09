@@ -96,7 +96,7 @@ $(".del_tutor").on('click', function(event){
 
 $.ajax({
   method: "POST",
-  url: "https://test.mcioko.edu.kz/moderator/tutors/delete/",
+  url: "https://test.mcioko.edu.kz/moderator/tutors/delete/", 
   data: formData,
   dataType: 'json',
   success: function (data) {
