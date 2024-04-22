@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/maintenance/recalculate/{quiz_id}', 'App\Http\Controllers\MaintenanceController@recalculateResults')->middleware('role:1');
 
     Route::get('admin/service', 'App\Http\Controllers\ServiceController@show_page')->middleware('role:1');
+    Route::get('admin/service/delete_dublicates/{quiz_id}', 'App\Http\Controllers\ServiceController@delete_dublicates')->middleware('role:1');
 
 
 

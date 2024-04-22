@@ -25,6 +25,26 @@ use App\Models\Scholler_count;
 class ServiceController extends Controller
 {
     public function show_page() {
-        return view('admin.service');
+        $quizzes = Quiz::all();
+        $data = [
+            'quizzes' =>  $quizzes,
+        ];        
+        return view('admin.service', $data);
     }
+
+
+    public function delete_dublicates($quiz_id) {
+        $quiz = Quiz::find($quiz_id);
+        $sql = 'SELECT z.* 
+        FROM respondent_results AS w
+        JOIN respondent_results AS z ON z.respondent_id = w.respondent_id
+                        AND z.quiz_id = w.quiz_id
+                        AND z.id > w.id WHERE z.quiz_id = {$quiz_id};';
+        $data = [
+            'quizzes' =>  $quizzes,
+        ];        
+        $quizzes = Quiz::all();
+        return view('admin.service', $data);
+    }
+    
 }

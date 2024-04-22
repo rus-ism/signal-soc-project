@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>{{ __("Тесты") }}</title>
+  <title>{{ __("Техническое обслуживание базы") }}</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -160,11 +160,7 @@
                   <thead>
                   <tr>
                     <th>{{ __("Тест") }}</th>
-                    <th>{{ __("Описание") }} </th>                    
-                    <th>{{ __("Публичный") }} \ {{ __("закрытый доступ") }}</th>
-                    <th>{{ __("Для классов") }}:</th>
-                    <th>{{ __("Количество вопросов") }}</th>
-                    <th>{{ __("Тип теста") }}</th>
+                    <th>{{ __("Выполнить") }} </th>                    
                   </tr>
                   </thead>
                   <tbody>
@@ -172,15 +168,7 @@
 									@foreach ($quizzes as $quiz)                    
                   <tr>
                     <td><a href="/admin/test/edit/{{$quiz->id}}"> {{$quiz->quiz_name}}</a></td>
-                    <td>{{$quiz->quiz_description}}</td>
-                    <td>{{ __("Публичный") }}</td>
-                    <td>
-                      @foreach ($quiz->quizacl()->get('grade') as $grd)
-                        {{$grd['grade']}} &nbsp  
-                      @endforeach
-                    </td>
-                    <td>{{$quiz->question()->get()->count()}}</td>
-                    <td>{{$quiz->type_id}}</td>
+                    <td><a href="/admin/service/delete_dublicates/{{$quiz->id}}">{{__("Удалить дубликаты")}}</a></td>
                   </tr>
 									@endforeach
 									
@@ -195,20 +183,15 @@
                   <tfoot>
                   <tr>
                   <th>{{ __("Тест") }}</th>
-                    <th>{{ __("Описание") }}</th>                    
-                    <th>{{ __("Публичный") }} \ {{ __("закрытый доступ") }}</th>
-                    <th>{{ __("Количество вопросов") }}</th>
-                    <th>{{ __("Тип теста") }}</th>
+                    <th>{{ __("") }}</th>                    
+
                   </tr>
                   </tfoot>
                 </table>
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
-          <button class="btn btn-block btn-outline-primary btn-xs add_quiz" id="add_quiz_button">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-            {{ __("Добавить тест") }}
-          </button>
+
       
         </div>
         <!-- /.card-footer-->
