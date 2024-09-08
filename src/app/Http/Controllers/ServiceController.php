@@ -46,5 +46,32 @@ class ServiceController extends Controller
         $quizzes = Quiz::all();
         return view('admin.service', $data);
     }
+
+    public function grade_transfer($grade){
+        
+        $newGrade = $grade+1;
+        
+        Profile::where('grade', '=', $grade)->update(['grade' => $newGrade]);
+        
+        if ($grade == 11) {
+            Profile::where('grade', '=', 12)->update(['role_id' => 6]);
+
+        }
+
+
+        return back();
+    }
     
+    public function graduation(Request $request){
+        $profiles = Profile::where('grade', 12)->get();
+        foreach ($profiles as $profile) {
+            //to long
+            $profile->role_id = 6;
+            $user = $profile->user()->first();
+            $user->role = 6;
+            $user->save();                
+            
+            $profile->save();
+        }        
+    }
 }
