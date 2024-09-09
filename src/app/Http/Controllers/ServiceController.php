@@ -53,12 +53,6 @@ class ServiceController extends Controller
         
         Profile::where('grade', '=', $grade)->update(['grade' => $newGrade]);
         
-        if ($grade == 11) {
-            Profile::where('grade', '=', 12)->update(['role_id' => 6]);
-
-        }
-
-
         return back();
     }
     
