@@ -70,7 +70,8 @@ class TutorController extends Controller
         $anketed_respondents = DB::table('respondents')->whereExists(function ($query) {
             $query->select(DB::raw(1))
                   ->from('respondent_results')
-                  ->whereRaw('respondent_results.respondent_id = respondents.id');
+                  ->whereRaw('respondent_results.respondent_id = respondents.id')
+                  ->whereRaw('respondent_results.updated_at > "2024-09-01"');
         })
         ->where('school_id', $school->id)->get()->count();
         
@@ -83,7 +84,8 @@ class TutorController extends Controller
 
         $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
         INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
-        WHERE respondents.school_id = ?';
+        WHERE respondents.school_id = ?
+        AND respondent_results.updated_at > "2024-09-01"';
         $select_result = DB::select($sql,[$school->id]);
         $all_results = $select_result[0]->cnt;
 
@@ -99,7 +101,8 @@ class TutorController extends Controller
                 $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
                 INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.school_id = ?
-                AND respondent_results.quiz_id = ?';
+                AND respondent_results.quiz_id = ?
+                AND respondent_results.updated_at > "2024-09-01"';
                 $select_result = DB::select($sql,[$school->id, $quiz->id]);
                 $quiz_result_count = $select_result[0]->cnt;   
 
@@ -110,6 +113,7 @@ class TutorController extends Controller
                     $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
                     INNER JOIN respondents ON respondents.id = respondent_results.respondent_id
                     WHERE respondents.school_id = ?
+                    AND respondent_results.updated_at > "2024-09-01"
                     AND respondent_results.quiz_id = ? 
                     AND respondent_results.scope >= 
                     (SELECT result_interpretations.from FROM result_interpretations 
@@ -188,7 +192,8 @@ class TutorController extends Controller
     $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
         INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
         WHERE respondents.school_id = ? 
-        AND respondent_results.quiz_id = ?;', [$school->id,$quiz_id]);
+        AND respondent_results.quiz_id = ?
+        AND respondent_results.updated_at > "2024-09-01";', [$school->id,$quiz_id]);
     $school_respondents_count = $select_result[0]->cnt;        
     /*---------- END Get School respondents count ----------------------*/  
 
@@ -227,6 +232,7 @@ class TutorController extends Controller
             INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
             WHERE respondents.school_id = ? 
             AND respondents.grade = ?
+            AND respondent_results.updated_at > "2024-09-01"
             AND respondent_results.quiz_id = ? ;', [$school->id,$class,$quiz_id]);
         $grades[$grade_i]['avg'] = round($select_result[0]->average,2);
         //----------- END Get AVG By Grade ---------------//  
@@ -241,6 +247,7 @@ class TutorController extends Controller
                 $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
                     INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                     WHERE respondents.school_id = ? AND respondent_results.quiz_id = ?
+                    AND respondent_results.updated_at > "2024-09-01"
                     AND respondent_results.scope >= ? AND respondent_results.scope <= ? 
                     AND respondents.grade = ?;', [$school->id,$quiz_id,$range['from'],$range['to'],$class]);
                 //dd($select_result[0]->cnt);
@@ -256,7 +263,8 @@ class TutorController extends Controller
     $select_result = DB::select('SELECT AVG(respondent_results.scope) AS average FROM respondents
         INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
         WHERE respondents.school_id = ? 
-        AND respondent_results.quiz_id = ? ;', [$school->id,$quiz_id]);
+        AND respondent_results.quiz_id = ? 
+        AND respondent_results.updated_at > "2024-09-01";', [$school->id,$quiz_id]);
     $school_bal_avg = round($select_result[0]->average,2);
     //----------------------------------------//
 
@@ -272,6 +280,7 @@ class TutorController extends Controller
                 INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.school_id = ?
                 AND respondent_results.quiz_id = ?
+                AND respondent_results.updated_at > "2024-09-01"
                 AND respondent_results.scope >= ? 
                 AND respondent_results.scope <= ?;', [$school->id,$quiz_id,$range['from'],$range['to']]);
             $by_range_all[$rgi]['count'] = $select_result[0]->cnt;

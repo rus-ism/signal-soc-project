@@ -69,7 +69,7 @@ class Tutor_resultController extends Controller
             foreach ($quizzes as $quiz)
             {
                 $quizzes_array[$quiz_i]['quiz'] = $quiz;
-                $quiz_result_count = $quiz->respondent_result()->count();
+                $quiz_result_count = $quiz->respondent_result()->where('updated_at', '>', '2024-09-01')->count();
                 $quizzes_array[$quiz_i]['count'] = $quiz_result_count;
                 for ($ranges_i = 1; $ranges_i<4; $ranges_i++)
                 {                    
@@ -160,7 +160,7 @@ class Tutor_resultController extends Controller
             $sum = 0;
             foreach($respondents as $respondent)
             {
-                $results = $respondent->respondent_result()->get()->where('quiz_id', $quiz_id);
+                $results = $respondent->respondent_result()->where('updated_at', '>', '2024-09-01')->get()->where('quiz_id', $quiz_id);
                 $count += $results->count();
                 $sum = $results->sum('scope');
             }
