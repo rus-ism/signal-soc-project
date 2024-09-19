@@ -40,6 +40,8 @@ class QuizprocessingController extends Controller
     {
 
         $grade = $respondent->grade;
+        $user = $respondent->user();
+        dd($user);
 
         $ok = true;
         $school = $respondent->school()->first();

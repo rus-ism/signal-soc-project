@@ -100,6 +100,8 @@ class HomeController extends Controller
             $respondent->save();
         } else {
             $respondent = $isset_respondent;
+            $respondent->grade = $grade;
+            $respondent->update();
         }
 
         return $respondent;        

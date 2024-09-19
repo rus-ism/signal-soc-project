@@ -216,7 +216,7 @@
           <a href="/admin/service/grade_transfer/10">Из 10 в 11</a><br>
           <a href="/admin/service/grade_transfer/11">Из 11 в 12</a><br>
           <a href="/admin/service/graduation">Выпуск</a><br>
-          
+          <a href="/admin/service/update_respondent_grade?update_grade=1">Обновить клас Респондентов</a><br>
         </div>
         <!-- /.card-body -->
         <div class="card-footer">

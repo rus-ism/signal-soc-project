@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/service/grade_transfer/{grade}', 'App\Http\Controllers\ServiceController@grade_transfer')->middleware('role:1');
     //set role to 6
     Route::get('admin/service/graduation', 'App\Http\Controllers\ServiceController@graduation')->middleware('role:1');
-    
+    Route::get('admin/service/update_respondent_grade', 'App\Http\Controllers\ServiceController@update_respondent_grade')->middleware('role:1');
     
 /* Moderator */
     Route::get('moderator/', 'App\Http\Controllers\ModeratorController@dash')->middleware('role:2');

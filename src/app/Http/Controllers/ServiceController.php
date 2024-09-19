@@ -68,4 +68,20 @@ class ServiceController extends Controller
             $profile->save();
         }        
     }
+
+
+    public function update_respondent_grade(Request $request) {
+        if ($request->input('update_grade') != '1') {
+            return back();
+        }
+
+        $respondents = Respondent::all();
+        foreach ($respondents as $respondent) {
+            $grade = Profile::where('user_id', $respondent->user_id)->first()->grade;
+            $respondent->grade = $grade;
+            $respondent->update();
+        }
+        return back();
+        
+    }
 }
