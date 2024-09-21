@@ -160,9 +160,9 @@ Route::post('quizzes', 'App\Http\Controllers\HomeController@showQuizzes');
 Route::post('public-test', 'App\Http\Controllers\QuizprocessingController@publictest');
 Route::post('public-test/simplefinish', 'App\Http\Controllers\QuizprocessingController@simplefinish');
 
-Route::get('mainten/rescalc/{user_id}/{result_id}', 'App\Http\Controllers\MaintenanceController@testresultcalc');
+#Route::get('mainten/rescalc/{user_id}/{result_id}', 'App\Http\Controllers\MaintenanceController@testresultcalc');
 
-Route::get('debug/tutor/result/{result_id}/{quiz_id}/', 'App\Http\Controllers\TutorController@results_answers_debug');
+#Route::get('debug/tutor/result/{result_id}/{quiz_id}/', 'App\Http\Controllers\TutorController@results_answers_debug');
 
 
 
