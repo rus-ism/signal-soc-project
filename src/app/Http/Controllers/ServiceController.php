@@ -87,6 +87,7 @@ class ServiceController extends Controller
 
 
     public function gitCheck(){
+        echo 'ok';
         return back();
     }
 }
