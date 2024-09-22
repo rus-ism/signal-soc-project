@@ -84,4 +84,9 @@ class ServiceController extends Controller
         return back();
         
     }
+
+
+    public function gitCheck(){
+        return back();
+    }
 }

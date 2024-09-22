@@ -164,7 +164,7 @@ Route::post('public-test/simplefinish', 'App\Http\Controllers\QuizprocessingCont
 
 #Route::get('debug/tutor/result/{result_id}/{quiz_id}/', 'App\Http\Controllers\TutorController@results_answers_debug');
 
-
+Route::get('/service/git-check', 'App\Http\Controllers\ServiceController@gitCheck');
 
 Route::get('/clear', function() {
 
