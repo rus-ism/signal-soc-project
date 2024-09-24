@@ -173,7 +173,7 @@
                         <td>{{$result['profile']->fio}}</td>
                         <td>{{$result['respondent']->grade}}-{{$result['respondent']->litera}}</td>
                         <td>{{$rs['resp_res']->scope}}</td>
-                        <td>{{$rs['resp_res']->created_at}}</td>
+                        <td>{{$rs['resp_res']->updated_at}}</td>
 
                         <td><a href="/admin/result/{{$rs['resp_res']->id}}/{{$quiz->id}}">{{ __("Подробно") }}</a> </td>
                       </tr>

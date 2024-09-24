@@ -125,7 +125,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/tutor/result/grade/{grade}/{quiz_id}', 'App\Http\Controllers\TutorController@results_grade_detail')->middleware('role:3');
 
-    Route::get('/tutor/tests', 'App\Http\Controllers\TutorController@quizes')->middleware('role:3');
+    Route::get('/tutor/tests', 'App\Http\Controllers\result\TutorController@quizzes')->middleware('role:3');
 
     Route::get('tutor/result/{result_id}/{quiz_id}/', 'App\Http\Controllers\TutorController@results_answers')->middleware('role:3');
     

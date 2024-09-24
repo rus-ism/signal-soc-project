@@ -65,7 +65,7 @@ class TutorController extends Controller
             $profiles_pircent = 0;
         }
         $profiles_pircent_rounded = round($profiles_pircent, 2);
-        $all_respondents_count = Respondent::where('school_id', $school->id)->count();
+        $all_respondents_count = Respondent::where('school_id', $school->id)->where('updated_at', '>', '2024-09-01')->count();
 
         $anketed_respondents = DB::table('respondents')->whereExists(function ($query) {
             $query->select(DB::raw(1))
@@ -365,6 +365,7 @@ class TutorController extends Controller
          INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
          WHERE respondents.school_id = ? 
          AND respondent_results.quiz_id = ? 
+         AND respondent_results.academic_year = "24-25"
          AND respondents.grade = ?;', [$school->id,$quiz_id,$grade]);
          $grade_bal_avg = round($select_result[0]->average,2);
      //----------------------------------------//
