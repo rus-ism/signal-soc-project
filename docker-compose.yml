@@ -8,7 +8,7 @@ services:
   nginx:
     build:
       context: docker/nginx
-    container_name: nginx
+    container_name: signal-nginx
     restart: always
     ports:
       - "86:80"
@@ -38,7 +38,7 @@ services:
   db:
     build:
       context: docker/mysql
-    container_name: db
+    container_name: signal-db
     #command: --lower_case_table_names=0
     restart: always
     tty: true    
@@ -51,13 +51,14 @@ services:
       SERVICE_NAME: db
     volumes:
       - ./data/mysql:/var/lib/mysql
+      - ./data/mysql-dump:/docker-entrypoint-initdb.d
     networks:
       - backend
 
   php:
     build:
       context: docker/php-fpm
-    container_name: php
+    container_name: signal-php
     volumes:
       - ./src:/var/www
     restart: always
@@ -68,7 +69,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: pma
+    container_name: signal-pma
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=db
