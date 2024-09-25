@@ -130,23 +130,36 @@ class ModeratorController extends Controller
             $school_id = $request->input('school_id');
             $school = School::find($school_id);
 
+            $tutor_user = User::where('email', $email)->first();
+            //dd($tutor_user);
+            if ($tutor_user) {
+                $tutor_user->name      = $name;
+                $tutor_user->password  = Hash::make($password);
+                $tutor_user->save();
+                $tutor_profile = $tutor_user->profile()->first();
+                $tutor_profile->region_id  = $region->id;
+                $tutor_profile->scool_name = $school->name;
+                $tutor_profile->scool_id   =$school_id;
+                $tutor_profile->save();
+            } else {
+
+                    $tutor_user = User::create([
+                        'name' => $name,
+                        'email' => $email,
+                        'role' => 3,
+                        'password' => Hash::make($password),                
+                    ]);
             
-            $user = User::create([
-                'name' => $name,
-                'email' => $email,
-                'role' => 3,
-                'password' => Hash::make($password),                
-            ]);
-    
-            $profile = Profile::create([
-                'user_id'           =>      $user->id,
-                'role_id'           =>      3,
-                'region_id'         =>      $region->id,
-                'scool_name'        =>      $school->name,
-                'scool_id'          =>      $school_id,
-                'grade'             =>      null,
-                'fio'               =>      $name,            
-                ]);
+                    $profile = Profile::create([
+                        'user_id'           =>      $user->id,
+                        'role_id'           =>      3,
+                        'region_id'         =>      $region->id,
+                        'scool_name'        =>      $school->name,
+                        'scool_id'          =>      $school_id,
+                        'grade'             =>      null,
+                        'fio'               =>      $name,            
+                        ]);
+                    }
 
 
             return redirect()->action([ModeratorController::class, 'tutors']);

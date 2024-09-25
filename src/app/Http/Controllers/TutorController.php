@@ -102,8 +102,10 @@ class TutorController extends Controller
                 INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.school_id = ?
                 AND respondent_results.quiz_id = ?
-                AND respondent_results.updated_at > "2024-09-01"';
+                AND respondent_results.academic_year = "24-25"
+                AND respondents.updated_at > "2024-09-01"';
                 $select_result = DB::select($sql,[$school->id, $quiz->id]);
+                dd($select_result);
                 $quiz_result_count = $select_result[0]->cnt;   
 
                 $quizzes_array[$quiz_i]['count'] = $quiz_result_count;
@@ -113,7 +115,7 @@ class TutorController extends Controller
                     $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
                     INNER JOIN respondents ON respondents.id = respondent_results.respondent_id
                     WHERE respondents.school_id = ?
-                    AND respondent_results.updated_at > "2024-09-01"
+                    AND respondents.updated_at > "2024-09-01"
                     AND respondent_results.quiz_id = ? 
                     AND respondent_results.scope >= 
                     (SELECT result_interpretations.from FROM result_interpretations 
@@ -425,7 +427,7 @@ class TutorController extends Controller
                         if ($respondent->count() > 0)
                         {
                             
-                            $respondent_results = $respondent->respondent_result()->get();
+                            $respondent_results = $respondent->respondent_result()->where('updated_at', '>', '2024-09-01')->get();
                             if ($respondent_results) 
                             {
 
@@ -576,7 +578,7 @@ public function schoolar_link(Request $request)
        // dd($action);
        if ($action == 'show_form')
        {
-        $ik_str = $region->id.''.$school->id.''.random_int(1000, 9999);
+        $ik_str = $region->id.''.$school->id.''.random_int(1000, 99999);
 
         $data = [
             'ic' => $ik_str,
