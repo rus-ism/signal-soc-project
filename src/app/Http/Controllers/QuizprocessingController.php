@@ -169,6 +169,7 @@ class QuizprocessingController extends Controller
             $isset_respondent_answer->answer_id = $value;
             $isset_respondent_answer->answered = $answered;
             $isset_respondent_answer->scope = $ans_scope;
+            $isset_respondent_answer->updated_at = now();
             $isset_respondent_answer->session = Session::getId();
             $isset_respondent_answer->save();            
           }
@@ -200,6 +201,7 @@ class QuizprocessingController extends Controller
         } else {
             $isset_respondent_result->count = count($request->input('ans'));
             $isset_respondent_result->scope = $sum;
+            $isset_respondent_result->updated_at = now();
             $isset_respondent_result->session = Session::getId();
             $isset_respondent_result->save();            
         }
