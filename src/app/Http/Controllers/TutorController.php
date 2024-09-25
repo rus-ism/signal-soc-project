@@ -222,6 +222,7 @@ class TutorController extends Controller
         INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
         WHERE respondents.school_id = ? 
         AND respondent_results.quiz_id = ? 
+        AND respondent_results.updated_at > "2024-09-01"
         AND respondents.grade = ?;', [$school->id,$quiz_id,$class]);
         $class_respondents_count = $select_result[0]->cnt;      
         $grades[$grade_i]['class_respondents_count'] = $class_respondents_count;    
@@ -320,7 +321,8 @@ class TutorController extends Controller
      {
          abort(404, 'Ресурс не найден');
      }        
-     $all_respondents = $school->respondent()->get()->where('grade', $grade);
+     $all_respondents = $school->respondent()->get()->where('grade', $grade)->where('updated_at', '>', '2024-09-01');
+    
      $interprets = $quiz->result_interpretation()->get();
 
      
@@ -331,7 +333,7 @@ class TutorController extends Controller
      $si = 0;
      foreach ($all_respondents as $respondent)
      {
-         $quiz_results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->get();
+         $quiz_results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->where('updated_at', '>', '2024-09-01')->get();
          if ($quiz_results->count() > 0) {
              $myResult[$si]['respondent'] = $respondent;
              $profile = $respondent->user()->first()->profile()->first();
