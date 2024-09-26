@@ -142,7 +142,9 @@ class QuizprocessingController extends Controller
                 }
           }
           $isset_respondent_answer = Respondent_answer::where('respondent_id', $respondent_id)->where('quiz_id', $quiz_id)->where('question_id', $key)->first();
-          $isset_respondent_answer->delete();
+          if ($isset_respondent_answer) {
+                $isset_respondent_answer->delete();
+            }
           $isset_respondent_answer = Respondent_answer::where('respondent_id', $respondent_id)->where('quiz_id', $quiz_id)->where('question_id', $key)->first();
           //dd($isset_respondent_answer);
           if (!$isset_respondent_answer) {
