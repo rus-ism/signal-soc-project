@@ -105,7 +105,7 @@ class TutorController extends Controller
                 AND respondent_results.academic_year = "24-25"
                 AND respondents.updated_at > "2024-09-01"';
                 $select_result = DB::select($sql,[$school->id, $quiz->id]);
-                dd($select_result);
+                //dd($select_result);
                 $quiz_result_count = $select_result[0]->cnt;   
 
                 $quizzes_array[$quiz_i]['count'] = $quiz_result_count;
