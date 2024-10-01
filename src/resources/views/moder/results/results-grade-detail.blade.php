@@ -163,7 +163,7 @@
                         @if($quiz->type_id != 2)
                           <td>{{$rs['resp_res']->scope}}</td>
                         @endif
-                        <td>{{$rs['resp_res']->created_at}}</td>
+                        <td>{{$rs['resp_res']->updated_at}}</td>
 
                         <td><a href="/moderator/results/answers/{{$rs['resp_res']->id}}/{{$quiz->id}}">{{ __("Подробно") }}</a> </td>
                       </tr>

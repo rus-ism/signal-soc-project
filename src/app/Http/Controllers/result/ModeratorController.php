@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\result;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,12 +25,15 @@ use App\Models\Respondent;
 use App\Models\Result_interpretation;
 use App\Models\Scholler_count;
 
-use App\Resultcalc\Resultcalc;
-
-class Moderator_resultController extends Controller
+class ModeratorController extends Controller
 {
-    public function index(Request $request)  // List all tests
+
+    /***************************************
+     *  List all tests
+     * ***********************************/
+    public function getOverviewByQuizzes(Request $request)  
     {
+
         $user = $this->auth();        
         $profile = $user->profile()->first();  
         if (($profile->role_id == 0) OR ($profile->role_id == 3) )
@@ -37,12 +42,13 @@ class Moderator_resultController extends Controller
         }   
         
         
-        $region = $profile->region()->first();   
+        $region = $profile->region()->first();  
 
-        $all_respondents = Respondent::where('region_id', $region->id)->get();
-
+        $all_respondents = Respondent::where('region_id', $region->id)->where('updated_at', '>', '2024-09-01')->get();
         $all_student_count = Scholler_count::where('region_id', $region->id)->sum('count');
         $all_profiles_count = Profile::where('role_id', 0)->where('region_id',$region->id)->get()->count();
+        
+        // Pircent of inserted profiles
         if (($all_profiles_count != 0)AND ($all_student_count != 0))
         {
             $profiles_pircent = ($all_profiles_count * 100) / $all_student_count;
@@ -50,23 +56,25 @@ class Moderator_resultController extends Controller
             $profiles_pircent = 0;
         }
         $profiles_pircent_rounded = round($profiles_pircent, 2);
-        $all_respondents_count = Respondent::where('region_id', $region->id)->get()->count();; 
+
+        $all_respondents_count = Respondent::where('region_id', $region->id)->where('updated_at', '>', '2024-09-01')->get()->count();; 
         $anketed_respondents = DB::table('respondents')->whereExists(function ($query) {
             $query->select(DB::raw(1))
                   ->from('respondent_results')
-                  ->whereRaw('respondent_results.respondent_id = respondents.id');
-        })
-        ->get()->count();
+                  ->whereRaw('respondent_results.respondent_id = respondents.id')
+                  ->whereRaw('respondent_results.updated_at > "2024-09-01"');
+        })->get()->count();
         if (($anketed_respondents != 0) AND ($all_student_count != 0))
         {
             $anketed_pircent = ($anketed_respondents * 100) / $all_student_count;
         } else {
             $anketed_pircent = 0;
         }
-        //dd($anketed_pircent);
+
         $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
         INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
-        WHERE respondents.region_id = ? ';
+        WHERE respondents.region_id = ?
+        AND respondent_results.updated_at > "2024-09-01"';
         $select_result = DB::select($sql,[$region->id]);
         $all_results = $select_result[0]->cnt;
 
@@ -78,11 +86,13 @@ class Moderator_resultController extends Controller
             foreach ($quizzes as $quiz)
             {
                 $quizzes_array[$quiz_i]['quiz'] = $quiz;
-                // respondet results By quiz And region
+
                 $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
                 INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.region_id = ? 
-                AND respondent_results.quiz_id = ?';
+                AND respondent_results.quiz_id = ?
+                AND respondent_results.quiz_id in (1,3)
+                AND respondent_results.updated_at > "2024-09-01"';
                 $select_result = DB::select($sql,[$region->id, $quiz->id]);
                 $quiz_result_count = $select_result[0]->cnt;
 
@@ -92,6 +102,8 @@ class Moderator_resultController extends Controller
                     $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
                     INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
                     WHERE respondents.region_id = ? 
+                    AND respondent_results.updated_at > "2024-09-01"
+                    AND respondent_results.quiz_id in (1,3)
                     AND respondent_results.quiz_id = ? 
                     AND respondent_results.scope >= 
                     (SELECT result_interpretations.from FROM result_interpretations WHERE quiz_id = ? 
@@ -138,11 +150,12 @@ class Moderator_resultController extends Controller
             'anketed_pircent' => round($anketed_pircent,2),
 
         ];
-        return view('moder.results.results', $data);
+        return view('moder.results.results', $data);        
+        
     }
 
 
-    public function results_region_detail($quiz_id)    //By schools
+    public function getQuizOverviewBySchools($quiz_id)
     {
         $user = $this->auth();        
         $profile = $user->profile()->first();  
@@ -189,7 +202,7 @@ class Moderator_resultController extends Controller
             $sum = 0;
             foreach($respondents as $respondent)
             {
-                $results = $respondent->respondent_result()->get()->where('quiz_id', $quiz_id);
+                $results = $respondent->respondent_result()->get()->where('quiz_id', $quiz_id)->where('updated_at', '>', '2024-09-01');
                 $count += $results->count();
                 $sum = $results->sum('scope');
             }
@@ -205,6 +218,7 @@ class Moderator_resultController extends Controller
                     $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
                     INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                     WHERE respondents.school_id = ? 
+                    AND respondent_results.updated_at > "2024-09-01"
                     AND respondent_results.quiz_id = ? 
                     AND respondent_results.scope >= ? 
                     AND respondent_results.scope <= ?;', [$school->id,$quiz_id,$range['from'],$range['to']]);
@@ -217,6 +231,7 @@ class Moderator_resultController extends Controller
             $select_result = DB::select('SELECT AVG(respondent_results.scope) AS average FROM respondents
                 INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.school_id = ? 
+                AND respondent_results.updated_at > "2024-09-01"
                 AND respondent_results.quiz_id = ? ;', [$school->id,$quiz_id]);
             $byschool[$si]['avg'] = round($select_result[0]->average,2);
             //----------------------------------------//
@@ -235,6 +250,7 @@ class Moderator_resultController extends Controller
                 $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
                 INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                 WHERE respondent_results.quiz_id = ?
+                AND respondent_results.updated_at > "2024-09-01"
                 AND respondent_results.scope >= ? 
                 AND respondent_results.scope <= ?;', [$quiz_id,$range['from'],$range['to']]);
                 $by_range_all[$rgi]['count'] = $select_result[0]->cnt;
@@ -253,9 +269,12 @@ class Moderator_resultController extends Controller
             'by_range_all' => $by_range_all,
         ];
         return view('moder.results.results-region-detail', $data);
-    }    
+    }
 
-    public function results_school_detail($school_id, $quiz_id)    // By grades
+    /**********************************
+     * School Results by Grade
+     */
+    public function getQuizOverviewByGrade($school_id, $quiz_id)
     {
         $user = $this->auth();        
         $profile = $user->profile()->first();  
@@ -284,6 +303,7 @@ class Moderator_resultController extends Controller
         $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
         INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
         WHERE respondents.school_id = ? 
+        AND respondent_results.updated_at > "2024-09-01"
         AND respondent_results.quiz_id = ?;', [$school->id,$quiz_id]);
         $school_respondents_count = $select_result[0]->cnt;        
         /*---------- END Get School respondents count ----------------------*/        
@@ -312,6 +332,7 @@ class Moderator_resultController extends Controller
             $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
             INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
             WHERE respondents.school_id = ? 
+            AND respondent_results.updated_at > "2024-09-01"
             AND respondent_results.quiz_id = ? 
             AND respondents.grade = ?;', [$school->id,$quiz_id,$class]);
             $class_respondents_count = $select_result[0]->cnt;      
@@ -322,6 +343,7 @@ class Moderator_resultController extends Controller
             $select_result = DB::select('SELECT AVG(respondent_results.scope) AS average FROM respondents
                 INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.school_id = ? 
+                AND respondent_results.updated_at > "2024-09-01"
                 AND respondents.grade = ?
                 AND respondent_results.quiz_id = ? ;', [$school->id,$class,$quiz_id]);
             $grades[$grade_i]['avg'] = round($select_result[0]->average,2);
@@ -339,6 +361,7 @@ class Moderator_resultController extends Controller
                     $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
                     INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                     WHERE respondents.school_id = ? AND respondent_results.quiz_id = ?
+                    AND respondent_results.updated_at > "2024-09-01"
                     AND respondent_results.scope >= ? AND respondent_results.scope <= ? AND respondents.grade = ?;', [$school_id,$quiz_id,$range['from'],$range['to'],$class]);
                     //dd($select_result[0]->cnt);
                     $grades[$grade_i]['ranges'][$rgi]['count'] = $select_result[0]->cnt;
@@ -363,6 +386,7 @@ class Moderator_resultController extends Controller
         $select_result = DB::select('SELECT AVG(respondent_results.scope) AS average FROM respondents
             INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
             WHERE respondents.school_id = ? 
+            AND respondent_results.updated_at > "2024-09-01"
             AND respondent_results.quiz_id = ? ;', [$school->id,$quiz_id]);
         $school_bal_avg = round($select_result[0]->average,2);
         //----------------------------------------//
@@ -378,6 +402,7 @@ class Moderator_resultController extends Controller
                 $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
                 INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.school_id = ?
+                AND respondent_results.updated_at > "2024-09-01"
                 AND respondent_results.quiz_id = ?
                 AND respondent_results.scope >= ? 
                 AND respondent_results.scope <= ?;', [$school_id,$quiz_id,$range['from'],$range['to']]);
@@ -397,14 +422,16 @@ class Moderator_resultController extends Controller
             'by_range_all' => $by_range_all,
         ];
         return view('moder.results.results-school-detail', $data);
-    }        
+    }
 
-    public function results_grade_detail($grade, $quiz_id, $school_id)    // By students
+    /*********************************
+     * Grade results by students
+     */
+    public function getQuizOverviewByStudents($grade, $quiz_id, $school_id) 
     {
-
         $user = $this->auth();        
         $profile = $user->profile()->first();  
-        
+        //dd($profile);
         if (($profile->role_id == 0) OR ($profile->role_id == 3) )
         {
             abort(403, 'Доступ запрещен');
@@ -438,7 +465,7 @@ class Moderator_resultController extends Controller
         $si = 0;
         foreach ($all_respondents as $respondent)
         {
-            $quiz_results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->get();
+            $quiz_results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->where('updated_at', '>', '2024-09-01')->get();
             if ($quiz_results->count() > 0) {
                 $myResult[$si]['respondent'] = $respondent;
                 $profile = $respondent->user()->first()->profile()->first();
@@ -472,6 +499,7 @@ class Moderator_resultController extends Controller
             INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
             WHERE respondents.school_id = ? 
             AND respondent_results.quiz_id = ? 
+            AND respondent_results.updated_at > "2024-09-01"
             AND respondents.grade = ?;', [$school->id,$quiz_id,$grade]);
             $grade_bal_avg = round($select_result[0]->average,2);
         //----------------------------------------//
@@ -480,6 +508,7 @@ class Moderator_resultController extends Controller
         $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
             INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
             WHERE respondents.school_id = ? 
+            AND respondent_results.updated_at > "2024-09-01"
             AND respondent_results.quiz_id = ? 
             AND respondents.grade = ?;', [$school->id,$quiz_id,$grade]);
         $grade_count = $select_result[0]->cnt;       
@@ -496,9 +525,13 @@ class Moderator_resultController extends Controller
             'grade_count' =>$grade_count,         
         ];
         return view('moder.results.results-grade-detail', $data);
-    }  
+    }
 
-    public function results_answers($result_id, $quiz_id)
+
+    /*************************************
+     * Answers for result
+     */
+    public function getResultAnswers($result_id, $quiz_id)
     {
         $result = Respondent_result::find($result_id);
 
@@ -587,10 +620,8 @@ class Moderator_resultController extends Controller
             'color_style' => $color_style,
             'scales'  => $scales,
         ];
-        return view('moder.results.results-answers', $data);
-        dd($questions);
-        dd($result);
-    }    
+        return view('moder.results.results-answers', $data);        
+    }
 
     // Check Auth
     private function auth()
@@ -599,5 +630,5 @@ class Moderator_resultController extends Controller
             redirect('login');
         }
         return User::find(Auth::user()->id);        
-    }  
+    }     
 }

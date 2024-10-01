@@ -64,8 +64,7 @@ class TutorController extends Controller
         $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
         INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
         WHERE respondents.school_id = ?
-        AND respondent_results.updated_at > "2024-09-01"
-        AND respondent_results.academic_year = "24-25"';
+        AND respondent_results.updated_at > "2024-09-01"';
         $select_result = DB::select($sql,[$school->id]);
         $all_results = $select_result[0]->cnt;
 
@@ -82,8 +81,7 @@ class TutorController extends Controller
                 INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
                 WHERE respondents.school_id = ?
                 AND respondent_results.quiz_id = ?
-                AND respondents.updated_at > "2024-09-01"
-                AND respondent_results.academic_year = "24-25"';
+                AND respondent_results.updated_at > "2024-09-01"';
                 $select_result = DB::select($sql,[$school->id, $quiz->id]);
                 $quiz_result_count = $select_result[0]->cnt;   
 
@@ -94,8 +92,7 @@ class TutorController extends Controller
                     $sql = 'SELECT COUNT(*) AS cnt FROM respondent_results
                     INNER JOIN respondents ON respondents.id = respondent_results.respondent_id
                     WHERE respondents.school_id = ?
-                    AND respondents.updated_at > "2024-09-01" 
-                    AND respondent_results.academic_year = "24-25"                   
+                    AND respondent_results.updated_at > "2024-09-01"                
                     AND respondent_results.quiz_id = ? 
                     AND respondent_results.scope >= 
                     (SELECT result_interpretations.from FROM result_interpretations 
@@ -157,6 +154,91 @@ class TutorController extends Controller
     }
 
 
+    public function getResultOverviewByGrade($grade, $quiz_id)
+    {
+        $user = $this->auth();        
+        $myprofile = $user->profile()->first();            
+        $region = $myprofile->region()->first();  
+        $school =  $myprofile->school()->first();
+        $school_id = $school->id;
+        $quiz = Quiz::find($quiz_id);
+        if ((!$quiz)OR(!$school))
+        {
+            abort(404, 'Ресурс не найден');
+        }        
+        $all_respondents = $school->respondent()->get()->where('grade', $grade);//->where('updated_at', '>', '2024-09-01');
+       // dd($all_respondents);
+        $interprets = $quiz->result_interpretation()->get();
+   
+        
+   
+        $all_results = [];
+        $myResult = [];
+        $ri = 0;
+        $si = 0;
+        foreach ($all_respondents as $respondent)
+        {
+            $quiz_results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->where('updated_at', '>', '2024-09-01')->get();
+            if ($quiz_results->count() > 0) {
+                $myResult[$si]['respondent'] = $respondent;
+                $profile = $respondent->user()->first()->profile()->first();
+                $myResult[$si]['profile'] = $profile;
+                $ri = 0;
+                foreach ($quiz_results as $result)
+                {
+                    $myResult[$si]['result'][$ri]['resp_res'] = $result;
+   
+   
+                    $select_result = DB::select('SELECT result_interpretations.assessment AS assessment FROM result_interpretations
+                    WHERE result_interpretations.quiz_id = ? 
+                    AND result_interpretations.from <= ? 
+                    AND result_interpretations.to >= ?;', [$quiz_id,$result->scope,$result->scope]);
+                    
+                    if ($select_result)                            
+                    {
+                        $assessment_resp = $select_result[0]->assessment;
+                    } else {
+                        $assessment_resp = 0;
+                    }
+   
+                    $myResult[$si]['result'][$ri]['assessment'] = $assessment_resp;
+                    $ri ++;
+                };
+                $si ++;
+            }
+        }
+        //------ Get AVG By grade ----------------//
+        $select_result = DB::select('SELECT AVG(respondent_results.scope) AS average FROM respondents
+            INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
+            WHERE respondents.school_id = ? 
+            AND respondent_results.quiz_id = ? 
+            AND respondent_results.academic_year = "24-25"
+            AND respondents.grade = ?;', [$school->id,$quiz_id,$grade]);
+            $grade_bal_avg = round($select_result[0]->average,2);
+        //----------------------------------------//
+   
+        //------------- Get respondent Count By Classes ---------------//
+        $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
+            INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
+            WHERE respondents.school_id = ? 
+            AND respondent_results.quiz_id = ? 
+            AND respondents.grade = ?;', [$school->id,$quiz_id,$grade]);
+        $grade_count = $select_result[0]->cnt;       
+        //------------- END Get respondent Count By Classes ------------//         
+        
+        
+        $data = [
+            'school' => $school,
+            'quiz' => $quiz,
+            'grade' => $grade,
+            'results'     => $myResult,
+            'interprets'  => $interprets, 
+            'grade_bal_avg' => $grade_bal_avg,  
+            'grade_count' =>$grade_count,         
+        ];     
+   
+        return view('tutor.results-grade-detail', $data);           
+    }
 
     // Check Auth
     private function auth()

@@ -105,11 +105,21 @@ Route::middleware('auth')->group(function () {
     Route::post('moderator/tutors/change-count', 'App\Http\Controllers\ModeratorController@change_stud_count');
     Route::get('moderator/tutors/change-count', 'App\Http\Controllers\ModeratorController@change_stud_count');
 
-    Route::get('moderator/results', 'App\Http\Controllers\Moderator_resultController@index')->middleware('role:2');
-    Route::get('moderator/results/quiz/{quiz_id}', 'App\Http\Controllers\Moderator_resultController@results_region_detail')->middleware('role:2');
-    Route::get('moderator/results/school/quiz/{school_id}/{quiz_id}', 'App\Http\Controllers\Moderator_resultController@results_school_detail')->middleware('role:2');
-    Route::get('moderator/results/school/grade/quiz/{grade}/{quiz_id}/{school_id}', 'App\Http\Controllers\Moderator_resultController@results_grade_detail')->middleware('role:2');
-    Route::get('moderator/results/answers/{result_id}/{quiz_id}/', 'App\Http\Controllers\Moderator_resultController@results_answers')->middleware('role:2');
+    // Moderator Quizzes overview
+    Route::get('moderator/results_old', 'App\Http\Controllers\Moderator_resultController@index')->middleware('role:2');
+    Route::get('moderator/results', 'App\Http\Controllers\result\ModeratorController@getOverviewByQuizzes')->middleware('role:2');
+    // Moderator By School
+    Route::get('moderator/results/quiz_old/{quiz_id}', 'App\Http\Controllers\Moderator_resultController@results_region_detail')->middleware('role:2');
+    Route::get('moderator/results/quiz/{quiz_id}', 'App\Http\Controllers\result\ModeratorController@getQuizOverviewBySchools')->middleware('role:2');
+
+    Route::get('moderator/results/school/quiz_old/{school_id}/{quiz_id}', 'App\Http\Controllers\Moderator_resultController@results_school_detail')->middleware('role:2');
+    Route::get('moderator/results/school/quiz/{school_id}/{quiz_id}', 'App\Http\Controllers\result\ModeratorController@getQuizOverviewByGrade')->middleware('role:2');
+
+    Route::get('moderator/results/school/grade/quiz_old/{grade}/{quiz_id}/{school_id}', 'App\Http\Controllers\Moderator_resultController@results_grade_detail')->middleware('role:2');
+    Route::get('moderator/results/school/grade/quiz/{grade}/{quiz_id}/{school_id}', 'App\Http\Controllers\result\ModeratorController@getQuizOverviewByStudents')->middleware('role:2');
+    // Show student Quiz answers
+    Route::get('moderator/results/answers_old/{result_id}/{quiz_id}/', 'App\Http\Controllers\Moderator_resultController@results_answers')->middleware('role:2');
+    Route::get('moderator/results/answers/{result_id}/{quiz_id}/', 'App\Http\Controllers\result\ModeratorController@getResultAnswers')->middleware('role:2');
 
     Route::get('tutor/', 'App\Http\Controllers\TutorController@quizes')->middleware('role:3');
     Route::get('tutor/schoolar', 'App\Http\Controllers\TutorController@schoolars')->middleware('role:3');
@@ -123,7 +133,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/tutor/result-school/{quiz_id}', 'App\Http\Controllers\TutorController@results_school_detail')->middleware('role:3');
 
-    Route::get('/tutor/result/grade/{grade}/{quiz_id}', 'App\Http\Controllers\TutorController@results_grade_detail')->middleware('role:3');
+    Route::get('/tutor/result/grade_old/{grade}/{quiz_id}', 'App\Http\Controllers\TutorController@results_grade_detail')->middleware('role:3');
+    Route::get('/tutor/result/grade/{grade}/{quiz_id}', 'App\Http\Controllers\result\TutorController@getResultOverviewByGrade')->middleware('role:3');
 
     Route::get('/tutor/tests', 'App\Http\Controllers\result\TutorController@quizzes')->middleware('role:3');
 
