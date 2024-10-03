@@ -50,7 +50,8 @@ class TutorController extends Controller
     public function quizes(Request $request)
     {
 
-        $user = $this->auth();        
+        $user = $this->auth();    
+        dd($user);
         $profile = $user->profile()->first();            
         dd($profile);
         $region = $profile->region()->first();  
