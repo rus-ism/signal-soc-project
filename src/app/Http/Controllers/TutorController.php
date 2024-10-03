@@ -51,9 +51,9 @@ class TutorController extends Controller
     {
 
         $user = $this->auth();    
-        dd($user);
+        //dd($user);
         $profile = $user->profile()->first();            
-        dd($profile);
+        //dd($profile);
         $region = $profile->region()->first();  
 
         $school =  $profile->school()->first();  
