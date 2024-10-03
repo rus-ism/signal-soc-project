@@ -52,7 +52,9 @@ class TutorController extends Controller
 
         $user = $this->auth();        
         $profile = $user->profile()->first();            
+        dd($profile);
         $region = $profile->region()->first();  
+
         $school =  $profile->school()->first();  
 
         $all_student_count = Scholler_count::where('school_id', $school->id)->sum('count');
