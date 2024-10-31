@@ -23,7 +23,7 @@ jQuery(document).ready(function($){
         $.ajax({
             method: 'post',
             type: "POST",
-            url: "https://test.mcioko.edu.kz/moderator/test",
+            url: "/moderator/test",
             data: formData,
             dataType: 'json',
             success: function (data) {

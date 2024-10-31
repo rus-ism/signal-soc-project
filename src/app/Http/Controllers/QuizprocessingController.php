@@ -107,7 +107,6 @@ class QuizprocessingController extends Controller
         $quiz = Quiz::find($quiz_id);
         $respondent_id = json_decode($request->input('respondent'))->id;
         $respondent = Respondent::find($respondent_id);
-        $user = $respondent->user();
 
         $school = $respondent->school()->first();
 
@@ -121,6 +120,16 @@ class QuizprocessingController extends Controller
 
         $scope = 0;
         //dd($respondent_id);
+
+          //Creating respondent_result
+          $respondent_result = Respondent_result::create([
+            'respondent_id' => $respondent_id,
+            'quiz_id'       => $quiz_id,
+            'count'         => count($request->input('ans')),
+            'scope'         => $scope,
+            'session'       => Session::getId(),                
+            ]);  
+
         foreach($request->input('ans') as $key => $value )
         {
           $answered = 1;
@@ -129,7 +138,7 @@ class QuizprocessingController extends Controller
             $answered = 0;
             $ans_scope = null;
             $value = null;
-          } else {
+          } else { // quiestion is answered
                 if ($quiz->type_id != 3) {
                     $ans_scope = Answer::find($value)->scope;
                 } elseif ($quiz->type_id == 3) {
@@ -140,7 +149,31 @@ class QuizprocessingController extends Controller
                         $ans_scope = 0;
                     }
                 }
+                $scope += $ans_scope;
+                // Creating respondent_answer
+               
           }
+          $respondent_answer = Respondent_answer::create([
+            'respondent_id'        => $respondent_id,
+            'respondent_result_id' => $respondent_result->id,
+            'quiz_id'              => $quiz_id,
+            'question_id'          => $key,
+            'answer_id'            => $value,
+            'answered'             => $answered,
+            'scope'                => $ans_scope,
+            'session'              => Session::getId(),
+        ]);           
+        }
+
+        $respondent_result->scope = $scope;
+        $respondent_result->save();
+        
+
+
+
+
+
+/*        
           $isset_respondent_answer = Respondent_answer::where('respondent_id', $respondent_id)->where('quiz_id', $quiz_id)->where('question_id', $key)->first();
           if ($isset_respondent_answer) {
                 $isset_respondent_answer->delete();
@@ -157,6 +190,7 @@ class QuizprocessingController extends Controller
                 'scope'         => $ans_scope,
                 'session'       => Session::getId(),
             ]);
+*/            
            /* 
             $respondent_answer = new Respondent_answer;
             $respondent_answer->respondent_id = $respondent_id;
@@ -167,7 +201,7 @@ class QuizprocessingController extends Controller
             $respondent_answer->scope = $ans_scope;
             $respondent_answer->session = Session::getId();
             $respondent_answer->save();
-            */
+            
           } else {
             $isset_respondent_answer->answer_id = $value;
             $isset_respondent_answer->answered = $answered;
@@ -179,6 +213,8 @@ class QuizprocessingController extends Controller
 
 
         }
+
+        
         $sum = Respondent_answers::where('respondent_id', $respondent_id)->where('quiz_id', $quiz_id)->where('session', Session::getId())->sum('scope');
  
         $isset_respondent_result = respondent_result::where('respondent_id', $respondent_id)->where('quiz_id', $quiz_id)->first();
@@ -200,7 +236,7 @@ class QuizprocessingController extends Controller
             $result->scope = $sum;
             $result->session = Session::getId();
             $result->save();
-        */
+        //
         } else {
             $isset_respondent_result->count = count($request->input('ans'));
             $isset_respondent_result->scope = $sum;
@@ -208,7 +244,7 @@ class QuizprocessingController extends Controller
             $isset_respondent_result->session = Session::getId();
             $isset_respondent_result->save();            
         }
-
+*/
 
         
         // Prepare Quizzes list
