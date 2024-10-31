@@ -17,6 +17,7 @@ class Respondent_answer extends Model
         'answered',
         'scope',
         'session',
+        'respondent_result_id',
     ];      
 
     public function respondent(): BelongsTo
