@@ -130,7 +130,7 @@ class ModeratorController extends Controller
             $school_id = $request->input('school_id');
             $school = School::find($school_id);
 
-            $tutor_user = User::where('email', $email)->first();
+            $tutor_user = User::where('email', '=', $email)->first();
             //dd($tutor_user);
             if ($tutor_user) {
                 $tutor_user->name      = $name;
