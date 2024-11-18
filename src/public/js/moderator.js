@@ -96,7 +96,7 @@ $(".del_tutor").on('click', function(event){
 
 $.ajax({
   method: "POST",
-  url: "/moderator/tutors/delete/", 
+  url: "/moderator/tutors/delete", 
   data: formData,
   dataType: 'json',
   success: function (data) {
@@ -149,7 +149,7 @@ $("#edit_tutor_modal_save").on('click', function(event){
 
 $.ajax({
   type: "POST",
-  url: "/moderator/tutors/change_scool/",
+  url: "/moderator/tutors/change_scool",
   data: formData,
   dataType: 'json',
   success: function (data) {
@@ -204,7 +204,7 @@ $("#rename_school_save").on('click', function(event){
 
 $.ajax({
   type: "POST",
-  url: "/moderator/school/rename/",
+  url: "/moderator/school/rename",
   data: formData,
   dataType: 'json',
   success: function (data) {
