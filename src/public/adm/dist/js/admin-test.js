@@ -651,5 +651,6 @@ jQuery('#add_quiz_button').click(function () {
         fill_interpret(18);
       });
       
+      
  
 });//Dock ready
