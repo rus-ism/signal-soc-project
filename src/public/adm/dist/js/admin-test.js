@@ -33,7 +33,7 @@ jQuery(document).ready(function($){
     });
     $.ajax({
       type: "POST",
-      url: "/admin/test/question/delete/",
+      url: "/admin/test/question/delete",
       data: data,
       dataType: 'json',
       success: function (data) {
@@ -94,7 +94,7 @@ jQuery(document).ready(function($){
       });
       $.ajax({
         type: "POST",
-        url: "/admin/test/question/update/",
+        url: "/admin/test/question/update",
         data: data,
         dataType: 'json',
         success: function (data) {
@@ -151,7 +151,7 @@ jQuery(document).ready(function($){
     });
     $.ajax({
       type: "POST",
-      url: "/admin/test/question/add/",
+      url: "/admin/test/question/add",
       data: data,
       dataType: 'json',
       success: function (data) {
@@ -205,7 +205,7 @@ jQuery(document).ready(function($){
     $.ajax({
       type: "POST",
       method: "POST",
-      url: "/admin/test/answer/delete/",
+      url: "/admin/test/answer/delete",
       data: data,
       dataType: 'json',
       success: function (data) {
@@ -339,7 +339,7 @@ jQuery('#answerModal').on('click', '.modal_edit', function() {
       });
       $.ajax({
         type: "POST",
-        url: "/admin/test/answer/add/",
+        url: "/admin/test/answer/add",
         data: data,
         dataType: 'json',
         success: function (data) {
@@ -378,7 +378,7 @@ jQuery('#answerModal').on('click', '.modal_edit', function() {
         });
         $.ajax({
           type: "POST",
-          url: "/admin/test/quizacl/change/",
+          url: "/admin/test/quizacl/change",
           data: data,
           dataType: 'json',
           success: function (data) {
@@ -443,7 +443,7 @@ jQuery('#answerModal').on('click', '.modal_edit', function() {
         });
         $.ajax({
           type: "POST",
-          url: "/admin/test/interpret/add/",
+          url: "/admin/test/interpret/add",
           data: data,
           dataType: 'json',
           success: function (data) {
@@ -488,7 +488,7 @@ jQuery('#answerModal').on('click', '.modal_edit', function() {
     });
     $.ajax({
       type: "POST",
-      url: "/admin/test/interpret/delete/",
+      url: "/admin/test/interpret/delete",
       data: data,
       dataType: 'json',
       success: function (data) {
@@ -548,7 +548,7 @@ jQuery('#add_quiz_button').click(function () {
         });
         $.ajax({
           type: "POST",
-          url: "/admin/test/quiz/add/",
+          url: "/admin/test/quiz/add",
           data: data,
           dataType: 'json',
           success: function (data) {

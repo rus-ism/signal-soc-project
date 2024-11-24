@@ -152,11 +152,13 @@
                       @endforeach
                     </td>
                     <td>{{$quiz['count']}}</td>   
-                    @if ($quiz['quiz']->id == 5)
+                    @if ($quiz['quiz']->id == 50)
                       <td colspan="3">Не применимо</td>
                     @else
                       @foreach($quiz['ranges'] as $range)
-                        <td>{{$range}}</td>              
+ 
+                            <td>{{$range}}</td> 
+       
                       @endforeach
                     @endif 
                     <td><a href="/tutor/result-school/{{$quiz['quiz']->id}}">{{ __("подробнее") }} ...</a></td>

@@ -167,9 +167,14 @@ class QuizprocessingController extends Controller
 //        $respondent_answer->save();
 
         }
-
-        $respondent_result->scope = $scope;
-        $respondent_result->save();
+        if ($quiz->type_id == 2) {
+            $resultcal = New Resultcalc;
+            $resultcal->set_result($respondent_result->id);
+            $scales = $resultcal->calc();
+        } else {
+            $respondent_result->scope = $scope;
+            $respondent_result->save();
+        }
         
 
 

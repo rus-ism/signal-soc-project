@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\result;
 
+use App\Resultcalc\Resultcalc;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -24,6 +26,8 @@ use App\Models\Quizacl;
 use App\Models\Respondent;
 use App\Models\Result_interpretation;
 use App\Models\Scholler_count;
+
+
 
 class ModeratorController extends Controller
 {

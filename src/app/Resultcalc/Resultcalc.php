@@ -83,6 +83,7 @@ class Resultcalc
         if (!$this->scales) {
             return 1;
         };
+        $common_scope = 0;
         $scales_array = [];
         $scale_i = 0;
         foreach ($this->scales AS $scale) {            
@@ -102,8 +103,11 @@ class Resultcalc
             $scales_array[$scale_i]['max'] = $scale->max;
             $scales_array[$scale_i]['scope'] = $scale_scope;
             $this->scales_array[] = $scales_array[$scale_i];
+            $common_scope = $common_scope + $scale_scope;
             $scale_i++;
         }
+        $this->result->scope = round($common_scope,0);
+        $this->result->save();
         return $this->scales_array;            
     }
 
