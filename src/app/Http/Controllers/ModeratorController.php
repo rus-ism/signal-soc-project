@@ -136,12 +136,28 @@ class ModeratorController extends Controller
                 $tutor_user->name      = $name;
                 $tutor_user->password  = Hash::make($password);
                 $tutor_user->save();
+				
                 $tutor_profile = $tutor_user->profile()->first();
+				if ($tutor_profile) {
                 $tutor_profile->region_id  = $region->id;
                 $tutor_profile->scool_name = $school->name;
                 $tutor_profile->scool_id   =$school_id;
                 $tutor_profile->save();
+				} 
+				 else {
+					  $profile = Profile::create([
+                        'user_id'           =>      $tutor_user->id,
+                        'role_id'           =>      3,
+                        'region_id'         =>      $region->id,
+                        'scool_name'        =>      $school->name,
+                        'scool_id'          =>      $school_id,
+                        'grade'             =>      null,
+                        'fio'               =>      $name,            
+                        ]);
+				 }
             } else {
+				                   
+			
 
                     $tutor_user = User::create([
                         'name' => $name,
@@ -151,7 +167,7 @@ class ModeratorController extends Controller
                     ]);
             
                     $profile = Profile::create([
-                        'user_id'           =>      $user->id,
+                        'user_id'           =>      $tutor_user->id,
                         'role_id'           =>      3,
                         'region_id'         =>      $region->id,
                         'scool_name'        =>      $school->name,
