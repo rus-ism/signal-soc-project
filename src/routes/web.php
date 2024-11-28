@@ -71,14 +71,14 @@ Route::middleware('auth')->group(function () {
     Route::post('admin/import/test/file', 'App\Http\Controllers\AdminController@testimport')->middleware('role:1');  
 
     /* maintenance */
-    Route::get('admin/maintenance/recalculate/{quiz_id}', 'App\Http\Controllers\MaintenanceController@recalculateResults')->middleware('role:1');
+    ##Route::get('admin/maintenance/recalculate/{quiz_id}', 'App\Http\Controllers\MaintenanceController@recalculateResults')->middleware('role:1');
 
     Route::get('admin/service', 'App\Http\Controllers\ServiceController@show_page')->middleware('role:1');
-    Route::get('admin/service/delete_dublicates/{quiz_id}', 'App\Http\Controllers\ServiceController@delete_dublicates')->middleware('role:1');
-    Route::get('admin/service/grade_transfer/{grade}', 'App\Http\Controllers\ServiceController@grade_transfer')->middleware('role:1');
+    ##Route::get('admin/service/delete_dublicates/{quiz_id}', 'App\Http\Controllers\ServiceController@delete_dublicates')->middleware('role:1');
+    ##Route::get('admin/service/grade_transfer/{grade}', 'App\Http\Controllers\ServiceController@grade_transfer')->middleware('role:1');
     //set role to 6
-    Route::get('admin/service/graduation', 'App\Http\Controllers\ServiceController@graduation')->middleware('role:1');
-    Route::get('admin/service/update_respondent_grade', 'App\Http\Controllers\ServiceController@update_respondent_grade')->middleware('role:1');
+    ##Route::get('admin/service/graduation', 'App\Http\Controllers\ServiceController@graduation')->middleware('role:1');
+    ##Route::get('admin/service/update_respondent_grade', 'App\Http\Controllers\ServiceController@update_respondent_grade')->middleware('role:1');
     
 /* Moderator */
     Route::get('moderator/', 'App\Http\Controllers\ModeratorController@dash')->middleware('role:2');
