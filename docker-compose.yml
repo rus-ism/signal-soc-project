@@ -72,7 +72,7 @@ services:
     container_name: signal-pma
     environment:
       - PMA_ARBITRARY=1
-      - PMA_HOST=db
+      - PMA_HOST=signal-db
       - PMA_PORT=3306
       - UPLOAD_LIMIT=100000000000
     depends_on:
