@@ -51,7 +51,7 @@ class ServiceController extends Controller
         
         $newGrade = $grade+1;
         
-        Profile::where('grade', '=', $grade)->update(['grade' => $newGrade]);
+        #Profile::where('grade', '=', $grade)->update(['grade' => $newGrade]);
         
         return back();
     }

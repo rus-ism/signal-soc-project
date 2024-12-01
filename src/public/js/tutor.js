@@ -84,6 +84,98 @@ jQuery('#example1').on('click', '.delete_student', function() {
 
 });
 
+
+/**----------Revert Student to 5 Grade */
+jQuery('#example1').on('click', '.revert5_student', function() {
+  console.log('click');
+  var profile_id = $(this).prev().val();
+  //var user_id = $(this).prev().prev().val();
+  var action = 'revert';
+
+  var data = {
+      action: action,
+      tograde:     5,
+      //user_id:    user_id,
+      profile_id: profile_id,
+  }
+  $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  console.log(data);
+  $.ajax({
+    type: "POST",
+    url: "/tutor/schoolar/revert",
+    data: data,
+    dataType: 'json',
+    success: function (data) {
+      console.log(data); 
+      if (data.error == 0) {
+          window.location.replace("/tutor/schoolar");
+      } else {
+          alert("Обратитесь к администратору");
+      }
+             
+      //fill(quiz_id);
+      
+    },
+    error: function (data) {
+      console.log('ERR');
+        console.log(data);
+    },
+}); 
+});
+
+/**----------Revert Student to 5 Grade */
+jQuery('#example1').on('click', '.revert6_student', function() {
+  console.log('click');
+  var profile_id = $(this).prev().val();
+  //var user_id = $(this).prev().prev().val();
+  var action = 'revert';
+
+  var data = {
+      action: action,
+      tograde:     6,
+      //user_id:    user_id,
+      profile_id: profile_id,
+  }
+  $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  console.log(data);
+  $.ajax({
+    type: "POST",
+    url: "/tutor/schoolar/revert",
+    data: data,
+    dataType: 'json',
+    success: function (data) {
+      console.log(data); 
+      if (data.error == 0) {
+          window.location.replace("/tutor/schoolar");
+      } else {
+          alert("Обратитесь к администратору");
+      }
+             
+      //fill(quiz_id);
+      
+    },
+    error: function (data) {
+      console.log('ERR');
+        console.log(data);
+    },
+}); 
+});
+
+
+
+
+
+
+
+
 /*------ Unlink student -------------*/
 
 jQuery('#example1').on('click', '.unlink_student', function() {

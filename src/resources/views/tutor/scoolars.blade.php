@@ -132,9 +132,11 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+            
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
+                    <th></th>
                     <th>{{ __("Индивидуальный код") }}</th>
                     <th>{{ __("ФИО") }}</th>
                     <th>{{ __("Класс") }}</th>
@@ -146,6 +148,18 @@
                   @foreach ($schoolars as $schoolar) 
                 
                     <tr>
+                      <td>  
+                      @if ($schoolar['profile']->grade == 6)
+                        <input type="hidden" name="user_id" value="{{$schoolar['profile']->user_id}}">
+                        <input type="hidden" name="profile_id" value="{{$schoolar['profile']->id}}">
+                        <i class="fas fa-backward revert5_student" style="cursor:pointer; font-size:15px; color:#C1A81B"> Вернуть в 5 класс </i>     
+                      @endif          
+                      @if ($schoolar['profile']->grade == 5)
+                        <input type="hidden" name="user_id" value="{{$schoolar['profile']->user_id}}">
+                        <input type="hidden" name="profile_id" value="{{$schoolar['profile']->id}}">
+                        <i class="fas fa-backward revert6_student" style="cursor:pointer; font-size:15px; color:#C1A81B"> Вернуть в 6 класс </i>     
+                      @endif                            
+                      </td>
                       <td>{{$schoolar['profile']->user()->first()->email}}</td>
                       <td>{{$schoolar['profile']->fio}}</td>
                       <td>{{$schoolar['profile']->grade}} {{$schoolar['profile']->litera}}</td>
@@ -183,6 +197,7 @@
                   </tr>
                   </tfoot>
                 </table>
+                
               </div>
               <form id="tutor_add_form" action="/tutor/schoolar/add" method="post">
               @csrf
@@ -289,6 +304,16 @@
       </div>
       <!-- /.modal -->
 <!----------------- EDIT / ADD ANSER -------------->
+
+
+
+
+
+<!-- AdminLTE for demo purposes 
+<script src="/adm/dist/js/demo.js"></script>-->
+
+
+
 
 
 <!-- jQuery -->

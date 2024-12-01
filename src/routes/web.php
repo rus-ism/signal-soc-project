@@ -130,6 +130,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/tutor/schoolar/edit', 'App\Http\Controllers\TutorController@schoolar_edit')->middleware('role:3');
     Route::post('/tutor/schoolar/delete', 'App\Http\Controllers\TutorController@schoolar_delete')->middleware('role:3');
     Route::post('/tutor/schoolar/unlink', 'App\Http\Controllers\TutorController@schoolar_unlink')->middleware('role:3');
+    Route::post('/tutor/schoolar/revert', 'App\Http\Controllers\TutorController@schoolar_revert')->middleware('role:3');
 
     Route::get('/tutor/result-school/{quiz_id}', 'App\Http\Controllers\result\TutorController@getResultOverviewByQuizSchool')->middleware('role:3');
 

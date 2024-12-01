@@ -769,6 +769,61 @@ public function schoolar_link(Request $request)
  }    
 
 
+
+/********* Revert To 5 Grade******************
+ * 
+ */
+public function schoolar_revert(Request $request)
+{
+    $user = $this->auth();        
+    $profile = $user->profile()->first(); 
+    $to = $request->input('tograde');
+
+    $action = $request->input('action');
+
+
+   if ($action == 'revert')
+   {
+       $profile_id = $request->input('profile_id');
+       
+//dd($user_id);
+       $profile = Profile::findOrFail($profile_id);
+       $st_user = $profile->user()->first();
+       //$user = User::findOrFail($user_id);
+       /*
+       if (($profile->grade != '6')AND($to == 5)) {
+        $respondent =  $user->respondent()->first();
+        $error = 2;
+        $data = [
+            'error' => $error,
+            'comment' => 'Ученик не в 6 классе',
+        ];        
+        return json_encode($data);
+       }
+
+*/
+
+
+       $profile->grade = $to;
+       $profile->save();
+       $respondent =  $st_user->respondent()->first();
+       if ($respondent) {
+           $respondent->grade = $to;
+           $respondent->save();
+
+       }
+       $error = 0;
+       $data = [
+           'error' => $error,
+           'user_id' => $st_user->id,
+       ];        
+       return json_encode($data);
+   }              
+
+
+} 
+
+
 /****
  *
  ************  By Student  *******************************
