@@ -430,7 +430,7 @@ class TutorController extends Controller
                         if ($respondent->count() > 0)
                         {
                             
-                            $respondent_results = $respondent->respondent_result()->where('updated_at', '>', '2024-09-01')->get();
+                            $respondent_results = $respondent->respondent_result()->where('updated_at', '>', '2024-09-01')->get()->unique('quiz_id');
                             if ($respondent_results) 
                             {
 
