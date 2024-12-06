@@ -165,8 +165,12 @@
                       <td>{{$schoolar['profile']->grade}} {{$schoolar['profile']->litera}}</td>
                       <td>
                           @if (count($schoolar['results']) > 0)
-                            @foreach ($schoolar['results'] as $result)                               
-                              <a href="/tutor/result/{{$result->id}}/{{$result->quiz()->first()->id}}">{{$result->quiz()->first()->quiz_name}}</a><br>
+                            @foreach ($schoolar['results'] as $result)         
+                              <!-- No need to show the fio 
+                              <a href="/tutor/result/{{$result->id}}/{{$result->quiz()->first()->id}}">{{$result->quiz()->first()->quiz_name}}</a><br> 
+                              -->
+                               <a href="#">{{$result->quiz()->first()->quiz_name}}</a><br>                      
+                              
                             @endforeach
                           @endif
                       </td>

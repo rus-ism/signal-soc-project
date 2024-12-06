@@ -229,7 +229,11 @@
                       }
                     @endphp
                       <tr style="background-color: {{$backcolor}};">
-                        <td>{{$result['profile']->fio}}</td>
+                        <!-- 
+                         # No need to show fio for tutors
+                        <td>{{$result['profile']->fio}}</td> 
+                        -->
+                        <td>**********</td>
                         <td>{{$result['respondent']->grade}}-{{$result['respondent']->litera}}</td>
                         @if($quiz->type_id != 2)
                           <td>{{$rs['resp_res']->scope}}</td>

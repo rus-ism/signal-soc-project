@@ -862,7 +862,13 @@ public function schoolar_revert(Request $request)
         foreach ($questions as $question)
         {
             $question_answer[$i]['question'] = $question->text;
-            $respondent_answer = Respondent_answer::where('respondent_id', $respondent->id)->where('question_id', $question->id)->first();
+            $respondent_answer = Respondent_answer::where('respondent_result_id', $result->id)->where('question_id', $question->id)->first();
+            $respondent_answer_old_answered = Respondent_answer::where('respondent_id', $respondent->id)->where('question_id', $question->id)->first();
+            if ((!$respondent_answer) AND (!$respondent_answer_old_answered)){
+                $respondent_answer = null;
+            } else {
+                $respondent_answer = $respondent_answer_old_answered;
+            }
             if (!$respondent_answer) {
                 //return view('error.403');
                 $answer_text = "Нет ответа";
