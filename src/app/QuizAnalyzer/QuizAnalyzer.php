@@ -41,6 +41,28 @@ class QuizAnalyzer
         $this->respondent = Respondent::find($respondent_id);
     }
 
+    
+    public function getCountByQuiz($quiz_id, $Json = false) {
+
+        $sql = 'SELECT COUNT(*) AS cnt
+                FROM (
+                    SELECT MAX(respondent_results.updated_at) AS latest_update, respondent_results.respondent_id
+                    FROM respondent_results
+                    INNER JOIN respondents ON respondent_results.respondent_id = respondents.id
+                    WHERE respondent_results.quiz_id = ?
+                    AND respondent_results.updated_at > "2024-09-01"
+                    AND respondent_results.academic_year = "24-25"
+                    GROUP BY respondent_results.respondent_id
+                ) AS latest_responses';
+        $select_result = DB::select($sql,[$quiz_id]);
+        $result = $select_result[0]->cnt;          
+        if ($Json) {
+            return json_encode($result);
+        }
+        return $result;
+
+    }    
+    
     public function getCountByQuizSchool($quiz_id, $school_id, $Json = false) {
 
         $sql = 'SELECT COUNT(*) AS cnt
@@ -63,6 +85,49 @@ class QuizAnalyzer
 
     }
 
+
+
+
+    // Get by Quiz,  reult interpritation
+    public function getCountByQuizAssessment($quiz_id, $Assessment, $Json = false) {
+
+        $sql = 'SELECT COUNT(*) AS cnt
+                FROM (
+                    SELECT rr.*
+                    FROM respondent_results rr
+                    INNER JOIN respondents r ON r.id = rr.respondent_id
+                    INNER JOIN (
+                        SELECT respondent_id, MAX(updated_at) AS latest_update
+                        FROM respondent_results
+                        WHERE quiz_id = ? 
+                        AND updated_at > "2024-09-01" 
+                        AND academic_year = "24-25"
+                        GROUP BY respondent_id
+                    ) AS latest_responses ON rr.respondent_id = latest_responses.respondent_id AND rr.updated_at = latest_responses.latest_update
+                    WHERE rr.academic_year = "24-25"       
+                    AND rr.updated_at > "2024-09-01"            
+                    AND rr.scope >= (
+                        SELECT ri.from
+                        FROM result_interpretations ri
+                        WHERE quiz_id = ?
+                        AND ri.assessment = ?
+                    )
+                    AND rr.scope <= (
+                        SELECT ri.to
+                        FROM result_interpretations ri
+                        WHERE quiz_id = ?
+                        AND ri.assessment = ?
+                    )
+                ) AS unique_responses;';
+        $select_result = DB::select($sql,[$quiz_id, $quiz_id, $Assessment, $quiz_id, $Assessment]);
+       // if($quiz_id == 4) {dd($select_result);};
+        $result = $select_result[0]->cnt;          
+        if ($Json) {
+            return json_encode($result);
+        }
+        return $result;
+
+    }   
 
     // Get by Quiz, School, reult interpritation
     public function getCountByQuizSchoolAssessment($quiz_id, $school_id, $Assessment, $Json = false) {
