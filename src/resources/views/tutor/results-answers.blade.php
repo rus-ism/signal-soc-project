@@ -192,7 +192,7 @@
 
       <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Анкетирование ***************<!-- {{$profile->fio}} No need FIO--></h3>
+                <h3 class="card-title">Анкетирование {{$profile->fio}}</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">

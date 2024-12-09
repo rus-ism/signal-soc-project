@@ -208,16 +208,7 @@
 
         </div>
         <div class="card-body" id="quiz_table">
-          <a href="/admin/service/grade_transfer/5">Из 5 в 6</a><br>
-          <a href="/admin/service/grade_transfer/6">Из 6 в 7</a><br>
-          <a href="/admin/service/grade_transfer/7">Из 7 в 8</a><br>
-          <a href="/admin/service/grade_transfer/8">Из 8 в 9</a><br>
-          <a href="/admin/service/grade_transfer/9">Из 9 в 10</a><br>
-          <a href="/admin/service/grade_transfer/10">Из 10 в 11</a><br>
-          <a href="/admin/service/grade_transfer/11">Из 11 в 12</a><br>
-          <a href="/admin/service/graduation">Выпуск</a><br>
-          <a href="/admin/service/update_respondent_grade?update_grade=1">Обновить клас Респондентов</a><br>
-          <a href="/service/git-check">Git check 4</a><br>
+
         </div>
         <!-- /.card-body -->
         <div class="card-footer">

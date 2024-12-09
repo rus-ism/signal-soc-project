@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/403', 'App\Http\Controllers\AdminController@redirect403');
 
    // Route::get('admin/', 'App\Http\Controllers\AdminController@index');
-    Route::get('admin/', 'App\Http\Controllers\Admin_resultController@index')->middleware('role:1');
+    Route::get('admin/', 'App\Http\Controllers\ServiceController@show_page')->middleware('role:1');
     Route::get('admin/kz', 'App\Http\Controllers\Admin_resultController@index_kz')->middleware('role:1');
     Route::get('admin/tests', 'App\Http\Controllers\Admin_testController@index')->middleware('role:1');
     Route::get('admin/test/edit/{quiz_id}', 'App\Http\Controllers\Admin_testController@edit')->middleware('role:1');
