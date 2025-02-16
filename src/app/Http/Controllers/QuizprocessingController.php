@@ -107,7 +107,7 @@ class QuizprocessingController extends Controller
         $quiz = Quiz::find($quiz_id);
         $respondent_id = json_decode($request->input('respondent'))->id;
         $respondent = Respondent::find($respondent_id);
-dd($respondent);
+//dd($respondent);
         $school = $respondent->school()->first();
 
         /*******************************
