@@ -276,7 +276,7 @@ class TutorController extends Controller
         $si = 0;
         foreach ($all_respondents as $respondent)
         {
-            $quiz_results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->where('academic_year', '24-25')->where('updated_at', '>', '2024-09-01')->latest('updated_at')->limit(1)->get();
+            $quiz_results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->where('academic_year', '24-25')->where('updated_at', '>', '2025-02-01')->latest('updated_at')->limit(1)->get();
             if ($quiz_results->count() > 0) {
                 $myResult[$si]['respondent'] = $respondent;
                 $profile = $respondent->user()->first()->profile()->first();
