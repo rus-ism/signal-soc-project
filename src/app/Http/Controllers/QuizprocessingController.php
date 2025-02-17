@@ -129,6 +129,8 @@ class QuizprocessingController extends Controller
             'scope'         => $scope,
             'session'       => Session::getId(),                
             ]);  
+            $respondent_result->save();
+            
            // dd($respondent_result->id);
 
         foreach($request->input('ans') as $key => $value )
@@ -164,7 +166,7 @@ class QuizprocessingController extends Controller
             'scope'                => $ans_scope,
             'session'              => Session::getId(),
         ]);           
-//        $respondent_answer->save();
+        $respondent_answer->save();
 
         }
         if ($quiz->type_id == 2) {

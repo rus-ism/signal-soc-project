@@ -286,7 +286,7 @@ class TutorController extends Controller
                 {
                     $myResult[$si]['result'][$ri]['resp_res'] = $result;
    
-   
+                    
                     $select_result = DB::select('SELECT result_interpretations.assessment AS assessment FROM result_interpretations
                     WHERE result_interpretations.quiz_id = ? 
                     AND result_interpretations.from <= ? 
