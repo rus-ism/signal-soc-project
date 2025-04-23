@@ -149,118 +149,124 @@ class ModeratorController extends Controller
     {
         $user = $this->auth();        
         $profile = $user->profile()->first();  
-        if (($profile->role_id == 0) OR ($profile->role_id == 3) )
-        {
+        
+        // Проверка прав доступа
+        if (($profile->role_id == 0) || ($profile->role_id == 3)) {
             abort(403, 'Доступ запрещен');
         }   
-        
-        
+    
+        // Получение региона и викторины
         $region = $profile->region()->first(); 
         $quiz = Quiz::find($quiz_id);
-        if ((!$quiz)OR(!$region))
-        {
+    
+        if (!$quiz || !$region) {
             abort(404, 'Ресурс не найден');
         }
-        
+    
         $schools = $region->school()->get();
-
+        $schoolIds = $schools->pluck('id')->toArray();
+    
+        // Интерпретации результатов по диапазонам
         $result_interpretations = Result_interpretation::where('quiz_id', $quiz_id)->get();
-        if ($result_interpretations->count()>0) 
-        {
-            $i = 0;
-            foreach ($result_interpretations as $interpret) 
-            {
-                $ranges[$i]['from'] = $interpret->from;
-                $ranges[$i]['to'] = $interpret->to;
-                $ranges[$i]['text'] = $interpret->text;
-                $i++;
-            }
-        }        
-        $count = 0;
-        $sum = 0;
-        $byschool = [];
-
-        $si = 0;
-        foreach($schools as $school)
-        {
-            $byschool[$si]['school'] = $school->name;
-            $byschool[$si]['school_id'] = $school->id;
-            $byschool[$si]['contingent'] =  Scholler_count::where('school_id', $school->id)->get()->sum('count');
-
-            $respondents = $school->respondent()->get();
-            $count = 0;//$respondents->count();
-            $sum = 0;
-            foreach($respondents as $respondent)
-            {
-                $results = $respondent->respondent_result()->where('quiz_id', $quiz_id)->where('updated_at', '>', '2024-09-01')->where('academic_year', '24-25')->latest('updated_at')->limit(1)->get();
-                $count += $results->count();
-                $sum = $results->sum('scope');
-            }
-            $byschool[$si]['count'] =  $count;
-            $byschool[$si]['sum'] =  $sum;
-
-            $rgi = 0;
-            if ((isset($ranges)) AND (count($ranges) > 0))
-            {
-                foreach($ranges as $range)
-                {
-                    $byschool[$si]['ranges'][$rgi]['range'] = $range;
-                    $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
-                    INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
-                    WHERE respondents.school_id = ? 
-                    AND respondent_results.updated_at > "2024-09-01"
-                    AND respondent_results.quiz_id = ? 
-                    AND respondent_results.scope >= ? 
-                    AND respondent_results.scope <= ?;', [$school->id,$quiz_id,$range['from'],$range['to']]);
-                    $byschool[$si]['ranges'][$rgi]['count'] = $select_result[0]->cnt;
-                    $rgi++;
-                }
-            }            
-
-            //------ Get AVG By school ----------------//
-            $select_result = DB::select('SELECT AVG(respondent_results.scope) AS average FROM respondents
-                INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
-                WHERE respondents.school_id = ? 
-                AND respondent_results.updated_at > "2024-09-01"
-                AND respondent_results.academic_year = "24-25"
-                AND respondent_results.quiz_id = ? ;', [$school->id,$quiz_id]);
-            $byschool[$si]['avg'] = round($select_result[0]->average,2);
-            //----------------------------------------//
-            $si++;
-
+        $ranges = [];
+        foreach ($result_interpretations as $interpret) {
+            $ranges[] = [
+                'from' => $interpret->from,
+                'to' => $interpret->to,
+                'text' => $interpret->text
+            ];
         }
-
-        //------ Get All range assessment count ----------------//
-        $by_range_all = [];
-        $rgi = 0;
-        if ((isset($ranges)) AND (count($ranges) > 0))
-        {
-            foreach($ranges as $range)
-            {
-                $by_range_all[$rgi]['range'] = $range;
-                $select_result = DB::select('SELECT COUNT(*) AS cnt FROM respondents
-                INNER JOIN respondent_results ON respondent_results.respondent_id = respondents.id
-                WHERE respondent_results.quiz_id = ?
-                AND respondent_results.updated_at > "2024-09-01"
-                AND respondent_results.academic_year = "24-25"
-                AND respondent_results.scope >= ? 
-                AND respondent_results.scope <= ?;', [$quiz_id,$range['from'],$range['to']]);
-                $by_range_all[$rgi]['count'] = $select_result[0]->cnt;
-                $rgi++;
+    
+        // Получение контингента по школам
+        $contingents = Scholler_count::whereIn('school_id', $schoolIds)
+            ->select('school_id', DB::raw('SUM(count) as total'))
+            ->groupBy('school_id')
+            ->pluck('total', 'school_id');
+    
+        // Получение средних баллов по школам
+        $avgScopes = DB::table('respondents')
+            ->join('respondent_results', 'respondent_results.respondent_id', '=', 'respondents.id')
+            ->select('respondents.school_id', DB::raw('AVG(respondent_results.scope) as avg'))
+            ->where('respondent_results.quiz_id', $quiz_id)
+            ->where('respondent_results.updated_at', '>', '2024-09-01')
+            ->where('respondent_results.academic_year', '24-25')
+            ->groupBy('respondents.school_id')
+            ->pluck('avg', 'respondents.school_id');
+    
+        // Получение количества ответов и суммы scope по школам
+        $resultsBySchool = DB::table('respondents')
+            ->join('respondent_results', 'respondent_results.respondent_id', '=', 'respondents.id')
+            ->select('respondents.school_id', 
+                DB::raw('COUNT(respondent_results.id) as result_count'),
+                DB::raw('SUM(respondent_results.scope) as result_sum'))
+            ->where('respondent_results.quiz_id', $quiz_id)
+            ->where('respondent_results.updated_at', '>', '2024-09-01')
+            ->where('respondent_results.academic_year', '24-25')
+            ->groupBy('respondents.school_id')
+            ->get()
+            ->keyBy('school_id');
+    
+        // Подсчет количества респондентов по каждому диапазону и школе
+        $rangeCountsBySchool = [];
+        foreach ($ranges as $i => $range) {
+            $results = DB::table('respondents')
+                ->join('respondent_results', 'respondent_results.respondent_id', '=', 'respondents.id')
+                ->select('respondents.school_id', DB::raw('COUNT(*) as count'))
+                ->where('respondent_results.quiz_id', $quiz_id)
+                ->where('respondent_results.updated_at', '>', '2024-09-01')
+                ->whereBetween('respondent_results.scope', [$range['from'], $range['to']])
+                ->groupBy('respondents.school_id')
+                ->pluck('count', 'respondents.school_id');
+    
+            foreach ($results as $schoolId => $count) {
+                $rangeCountsBySchool[$schoolId][$i] = $count;
             }
-        } 
-        //-------------------------------------------------//        
-
-        
-       //dd($quiz);
-        $data = [
+        }
+    
+        // Сбор информации по каждой школе
+        $byschool = [];
+        foreach ($schools as $school) {
+            $id = $school->id;
+            $byschool[] = [
+                'school' => $school->name,
+                'school_id' => $id,
+                'contingent' => $contingents[$id] ?? 0,
+                'count' => $resultsBySchool[$id]->result_count ?? 0,
+                'sum' => $resultsBySchool[$id]->result_sum ?? 0,
+                'avg' => isset($avgScopes[$id]) ? round($avgScopes[$id], 2) : 0,
+                'ranges' => array_map(function($range, $i) use ($id, $rangeCountsBySchool) {
+                    return [
+                        'range' => $range,
+                        'count' => $rangeCountsBySchool[$id][$i] ?? 0,
+                    ];
+                }, $ranges, array_keys($ranges))
+            ];
+        }
+    
+        // Подсчет по всем диапазонам сразу (общий по региону)
+        $by_range_all = [];
+        foreach ($ranges as $range) {
+            $cnt = DB::table('respondent_results')
+                ->where('quiz_id', $quiz_id)
+                ->where('updated_at', '>', '2024-09-01')
+                ->where('academic_year', '24-25')
+                ->whereBetween('scope', [$range['from'], $range['to']])
+                ->count();
+    
+            $by_range_all[] = [
+                'range' => $range,
+                'count' => $cnt
+            ];
+        }
+    
+        // Подготовка данных для передачи в представление
+        return view('moder.results.results-region-detail', [
             'region' => $region,
             'quiz' => $quiz,
             'schools' => $byschool,
             'interprets' => $result_interpretations,
             'by_range_all' => $by_range_all,
-        ];
-        return view('moder.results.results-region-detail', $data);
+        ]);
     }
 
     /**********************************

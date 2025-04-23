@@ -6,8 +6,9 @@ RUN apt-get install -y \
     build-essential \
     libpng-dev \
     libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
+    libfreetype6-dev
+
+RUN apt-get install -y \
     zip \
     jpegoptim optipng pngquant gifsicle \
     vim \
@@ -15,7 +16,6 @@ RUN apt-get install -y \
     git \
     curl \
     libzip-dev
-
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -38,6 +38,6 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 RUN locale-gen en_US.UTF-8
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 USER www
