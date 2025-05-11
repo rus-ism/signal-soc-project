@@ -150,9 +150,13 @@ Route::get('/tpl', function () {
 });
 
 
-Route::get('/home', 'App\Http\Controllers\HomeController@index');       
-Route::get('/', 'App\Http\Controllers\HomeController@index');
-Route::get('/kz', 'App\Http\Controllers\HomeController@index_kz');
+#Route::get('/home', 'App\Http\Controllers\HomeController@index');       
+#Route::get('/', 'App\Http\Controllers\HomeController@index');
+#Route::get('/kz', 'App\Http\Controllers\HomeController@index_kz');
+
+Route::get('/home_fd', 'App\Http\Controllers\HomeController@index');       
+Route::get('/fd', 'App\Http\Controllers\HomeController@index');
+#Route::get('/kz', 'App\Http\Controllers\HomeController@index_kz');
 
 Route::get('import/region/file', 'App\Http\Controllers\ImportController@importview');
 Route::post('import/region', 'App\Http\Controllers\ImportController@import');
