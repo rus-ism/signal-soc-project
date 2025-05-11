@@ -47,7 +47,7 @@ class HomeController extends Controller
             //dd($request);
             return back()->withInput();
         }
-        if ($user->profile()->region->first() != 27)
+        if ($user->profile()->first()->region->first() != 27)
         {
             return view('error.403');
         }
