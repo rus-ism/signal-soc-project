@@ -47,6 +47,10 @@ class HomeController extends Controller
             //dd($request);
             return back()->withInput();
         }
+        if ($user->profile()->region->first() != 27)
+        {
+            return view('error.403');
+        }
         $respondent = $this->create_respondent($request, $user);
         $school = $respondent->school()->first();
         //dd($respondent->grade);
